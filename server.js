@@ -1,5 +1,7 @@
 var express = require('express');
 var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
 var bodyParser = require('body-parser');
 var mongo = require('mongoose');
 var Song = require("../zumo-controller/models/song");
@@ -14,6 +16,7 @@ var db = mongo.connect('mongodb://admin:manage01@ds213178.mlab.com:13178/zumo-co
 
 var app = express();
 app.use(bodyParser());
+app.use(logger('dev'));
 app.use(bodyParser.json({limit:'5mb'}));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname, 'dist')));
