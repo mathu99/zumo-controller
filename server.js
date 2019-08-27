@@ -35,6 +35,4 @@ app.get("/api/songs", function(req, res) {
     });
 });
 
-app.listen(8080, function() {
-    console.log('API listening on port 8080');
-})
+module.exports = app;

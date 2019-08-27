@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'zumo-controller';
+  constructor(private http: HttpClient) {
+    this.http.get('http://localhost:3000/api/songs').subscribe(data => {
+      console.log(data);
+    }, err => {
+      console.log(`Error occured: ${err.message}`);
+    });
+  }
 }
