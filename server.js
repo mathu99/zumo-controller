@@ -3,41 +3,20 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
+
 var mongo = require('mongoose');
-var Song = require("../zumo-controller/models/song");
-
-var db = mongo.connect('mongodb://admin:manage01@ds213178.mlab.com:13178/zumo-config', function(err, response) {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log('Connected to db');
-    }
-});
-
+var config = require('./config/database');
+var api = require('./routes/api');
 var app = express();
-app.use(bodyParser());
+
+
+
 app.use(logger('dev'));
 app.use(bodyParser.json({limit:'5mb'}));
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({'extended':'false', limit:'5mb'}));
 app.use(express.static(path.join(__dirname, 'dist')));
+app.use('/api', api);
 
-app.use(function (req, res, next){
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With', 'content-type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
-});
-
-app.get("/api/songs", function(req, res) {
-    Song.find({}, function (err, songs) {
-        if (err) {
-            res.send(400, 'No Songs Found');
-        } else {
-            res.send(songs);
-        }
-    });
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -56,5 +35,10 @@ app.use(function(req, res, next) {
     res.status(err.status || 500);
     res.render('error');
   });
+
+  mongo.Promise = require('bluebird');
+  mongo.connect(config.database, { promiseLibrary: require('bluebird') })
+  .then(() =>  console.log('connection succesful'))
+  .catch((err) => console.error(err));
 
 module.exports = app;
