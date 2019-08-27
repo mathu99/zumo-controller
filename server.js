@@ -9,14 +9,11 @@ var config = require('./config/database');
 var api = require('./routes/api');
 var app = express();
 
-
-
 app.use(logger('dev'));
 app.use(bodyParser.json({limit:'5mb'}));
 app.use(bodyParser.urlencoded({'extended':'false', limit:'5mb'}));
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use('/api', api);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
