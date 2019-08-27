@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { WindowRef } from './windowRef';
 
 @Component({
   selector: 'app-root',
@@ -10,12 +11,22 @@ export class AppComponent {
   songs: any[] = [];
   // url: string = 'http://localhost:3000';
   url: string = '';
-  constructor(private http: HttpClient) {
+  x = 0;
+  y = 0;
+  z = 0;
+
+  constructor(private http: HttpClient, private winRef: WindowRef) {
     this.http.get(this.url + '/api/songs').subscribe(data => {
       this.songs = <any> data;
     }, err => {
       console.log(`Error occured: ${err.message}`);
     });
+
+    winRef.nativeWindow.ondevicemotion = function(event) {
+      this.x = event.accelerationIncludingGravity.x;
+      this.y = event.accelerationIncludingGravity.y;
+      this.z = event.accelerationIncludingGravity.z;
+    }
   }
 
   select = (song: any) => {
@@ -37,4 +48,5 @@ export class AppComponent {
       console.log(`Error occured: ${err.message}`);
     });
   }
+
 }
