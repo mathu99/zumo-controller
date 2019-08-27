@@ -8,9 +8,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class AppComponent {
   songs: any[] = [];
+  // url: string = 'http://localhost:3000';
+  url: string = '';
   constructor(private http: HttpClient) {
-    // this.http.get('http://localhost:3000/api/songs').subscribe(data => {
-    this.http.get('/api/songs').subscribe(data => {
+    this.http.get(this.url + '/api/songs').subscribe(data => {
       this.songs = <any> data;
     }, err => {
       console.log(`Error occured: ${err.message}`);
@@ -18,6 +19,22 @@ export class AppComponent {
   }
 
   select = (song: any) => {
-    this.songs.map(e => (e._id === song._id) ? e.selected = !e.selected : false);
+    this.songs.forEach(e => {
+      if (e._id === song._id) {
+        e.selected = !e.selected;
+        this.updateSonginDB(e);
+      } else if (e.selected) {
+        e.selected = false;
+        this.updateSonginDB(e);
+      }
+    });
+  }
+
+  updateSonginDB = (song: any) => {
+    this.http.post(this.url + '/api/songs', song).subscribe(data => {
+      console.log('Success')
+    }, err => {
+      console.log(`Error occured: ${err.message}`);
+    });
   }
 }
