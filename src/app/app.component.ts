@@ -11,10 +11,9 @@ export class AppComponent {
   songs: any[] = [];
   // url: string = 'http://localhost:3000';
   url: string = '';
-  absolute = '';
-  alpha = '';
-  beta = '';
-  gamma = '';
+  x = '';
+  y = '';
+  z = '';
 
   constructor(private http: HttpClient, private winRef: WindowRef) {
     this.http.get(this.url + '/api/songs').subscribe(data => {
@@ -23,15 +22,13 @@ export class AppComponent {
       console.log(`Error occured: ${err.message}`);
     });
 
-    winRef.nativeWindow.addEventListener("deviceorientation", this.handleOrientation, true);
+    winRef.nativeWindow.addEventListener("devicemotion", this.handleOrientation);
   }
 
   handleOrientation = (event) => {
-    console.log(event);
-    this.absolute = event.absolute;
-    this.alpha = event.alpha;
-    this.beta = event.beta;
-    this.gamma = event.gamma;
+    this.x = event.acceleration.x;
+    this.y = event.acceleration.y;
+    this.z = event.acceleration.z;
   }
 
   select = (song: any) => {
