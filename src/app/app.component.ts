@@ -8,7 +8,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class AppComponent {
   constructor(private http: HttpClient) {
-    this.http.get('http://localhost:3000/api/songs').subscribe(data => {
+    this.http.get('/api/songs').subscribe(data => {
       console.log(data);
     }, err => {
       console.log(`Error occured: ${err.message}`);
