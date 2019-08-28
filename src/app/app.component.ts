@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
         // document.getElementById('gamma').innerHTML = Math.round(event.gamma);
         // document.getElementById('alpha').innerHTML = Math.round(event.alpha);
         // document.getElementById('is-absolute').innerHTML = event.absolute ? "true" : "false";
-     });
+     }.bind(this));
     } else {
       this.debug += ' ondeviceorientation NOT working ';
     }
@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
       this.debug += ' ondevicemotion working ';
       this.winRef.nativeWindow.addEventListener('devicemotion', function(event) {
         this.debug += '-';
-      });
+      }.bind(this));
     } else {
       this.debug += ' ondevicemotion NOT working ';
     }
