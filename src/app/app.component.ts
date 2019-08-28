@@ -35,8 +35,13 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.winRef.nativeWindow.addEventListener('click', () => {
+      this.debug += '+';
+    }, false).bind(this);
+
     if ('ondeviceorientation' in this.winRef.nativeWindow) {
-      this.debug += ' ondeviceorientation working ';
+      this.debug += ' ondeviceorientation enabled ';
       this.winRef.nativeWindow.addEventListener('deviceorientation', function(event) {
         this.debug += '-';
         // document.getElementById('cube').style.webkitTransform =
@@ -51,7 +56,7 @@ export class AppComponent implements OnInit {
         // document.getElementById('is-absolute').innerHTML = event.absolute ? "true" : "false";
      }.bind(this));
     } else {
-      this.debug += ' ondeviceorientation NOT working ';
+      this.debug += ' ondeviceorientation NOT enabled ';
     }
     if ('ondevicemotion' in this.winRef.nativeWindow) {
       this.debug += ' ondevicemotion working ';
