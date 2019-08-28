@@ -9,8 +9,8 @@ import { WindowRef } from './windowRef';
 })
 export class AppComponent implements OnInit {
   songs: any[] = [];
-  url: string = 'http://localhost:3000';
-  // url: string = '';
+  // url: string = 'http://localhost:3000';
+  url: string = '';
   beta = '';
   gamma = '';
   alpha = '';
