@@ -25,28 +25,22 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    this.winRef.nativeWindow.addEventListener('click', function() {
-      this.debug += '+';
-    }.bind(this), true);
-
     if ('ondeviceorientation' in this.winRef.nativeWindow) {
-      this.debug += ' ondeviceorientation enabled ';
+      this.debug += ' ondeviceorientation enabled';
       this.winRef.nativeWindow.addEventListener('deviceorientation', function(event) {
+        let coords =  {
+          zumoId: 1,
+          alpha: Math.round(event.alpha),
+          gamma: Math.round(event.gamma),
+          beta: Math.round(event.beta),
+        };
         this.alpha = Math.round(event.alpha);
         this.gamma = Math.round(event.gamma);
         this.beta = Math.round(event.beta);
+        this.updateCoordsInDB(coords);
      }.bind(this), true);
     } else {
-      this.debug += ' ondeviceorientation NOT enabled ';
-    }
-    if ('ondevicemotion' in this.winRef.nativeWindow) {
-      this.debug += ' ondevicemotion enabled ';
-      this.winRef.nativeWindow.addEventListener('devicemotion', function(event) {
-        // this.debug += '|';
-      }.bind(this), true);
-    } else {
-      this.debug += ' ondevicemotion NOT enabled ';
+      this.debug += ' ondeviceorientation NOT enabled';
     }
   }
 
@@ -54,18 +48,22 @@ export class AppComponent implements OnInit {
     this.songs.forEach(e => {
       if (e._id === song._id) {
         e.selected = !e.selected;
-        this.updateSonginDB(e);
+        this.updateSongInDB(e);
       } else if (e.selected) {
         e.selected = false;
-        this.updateSonginDB(e);
+        this.updateSongInDB(e);
       }
     });
   }
 
-  updateSonginDB = (song: any) => {
-    this.http.post(this.url + '/api/songs', song).subscribe(data => {
-      console.log('Success')
-    }, err => {
+  updateCoordsInDB = (coords: any) => {
+    this.http.post(this.url + '/api/coords', coords).subscribe(data => {}, err => {
+      console.log(`Error occured: ${err.message}`);
+    });
+  }
+
+  updateSongInDB = (song: any) => {
+    this.http.post(this.url + '/api/songs', song).subscribe(data => {}, err => {
       console.log(`Error occured: ${err.message}`);
     });
   }

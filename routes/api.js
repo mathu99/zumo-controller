@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Song = require("../models/song");
+var Coords = require("../models/coords");
 
 router.use(function (req, res, next){
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
@@ -38,6 +39,22 @@ router.post('/songs', function(req, res) {
     })
 });
 
+router.post('/coords', function(req, res) {
+    let query = {'zumoId': req.body.zumoId},
+        coords = {
+            zumoId: req.body.zumoId,
+            alpha: req.body.alpha,
+            beta: req.body.beta,
+            gamma: req.body.gamma,
+        };
+    Coords.findOneAndUpdate(query, coords, {upsert:true, runValidators:true}, function(err, doc){
+        if (err) {
+            return res.status(500).send({ success: false, msg: 'Coords save failed. ' + err });
+        }
+        res.json({ success: true, msg: 'Successfully updated coords.' });
+    })
+});
+
 /* API consumed by Arduino */
 
 router.get("/selectedTrackNumber", function(req, res) {
@@ -50,6 +67,16 @@ router.get("/selectedTrackNumber", function(req, res) {
             } else {
                 res.send(songs[0].trackNumber.toString());
             }
+        }
+    });
+});
+
+router.get("/currentCoords", function(req, res) {
+    Coords.find({'zumoId':req.query.zumoId}, function (err, coords) {
+        if (err) {
+            res.send(400, 'No Coords Found');
+        } else {
+            res.send(coords[0]);
         }
     });
 });
