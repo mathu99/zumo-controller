@@ -36,9 +36,9 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
 
-    this.winRef.nativeWindow.addEventListener('click', () => {
+    this.winRef.nativeWindow.addEventListener('click', function() {
       this.debug += '+';
-    }, false).bind(this);
+    }.bind(this), false);
 
     if ('ondeviceorientation' in this.winRef.nativeWindow) {
       this.debug += ' ondeviceorientation enabled ';
