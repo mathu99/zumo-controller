@@ -28,6 +28,7 @@ export class AppComponent {
     if ('DeviceMotionEvent' in winRef.nativeWindow) {
       this.debug = 'Device Motion API found';
       let onDeviceMotion = function (eventData) {
+        this.debug += '-'
         this.accelerationHandler(eventData.acceleration, 'moAccel');
         this.accelerationHandler(eventData.accelerationIncludingGravity, 'moAccelGrav');
         this.rotationHandler(eventData.rotationRate);
