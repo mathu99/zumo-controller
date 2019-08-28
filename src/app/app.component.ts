@@ -43,7 +43,8 @@ export class AppComponent implements OnInit {
     if ('ondeviceorientation' in this.winRef.nativeWindow) {
       this.debug += ' ondeviceorientation enabled ';
       this.winRef.nativeWindow.addEventListener('deviceorientation', function(event) {
-        this.debug += '-';
+        this.debug += '!';
+        this.winRef.nativeWindow.alert('deviceorientation');
         // document.getElementById('cube').style.webkitTransform =
         // document.getElementById('cube').style.transform =
         //         'rotateX(' + event.beta + 'deg) ' +
@@ -54,17 +55,18 @@ export class AppComponent implements OnInit {
         // document.getElementById('gamma').innerHTML = Math.round(event.gamma);
         // document.getElementById('alpha').innerHTML = Math.round(event.alpha);
         // document.getElementById('is-absolute').innerHTML = event.absolute ? "true" : "false";
-     }.bind(this));
+     }.bind(this), true);
     } else {
       this.debug += ' ondeviceorientation NOT enabled ';
     }
     if ('ondevicemotion' in this.winRef.nativeWindow) {
-      this.debug += ' ondevicemotion working ';
+      this.debug += ' ondevicemotion enabled ';
       this.winRef.nativeWindow.addEventListener('devicemotion', function(event) {
-        this.debug += '-';
-      }.bind(this));
+        this.winRef.nativeWindow.alert('devicemotion');
+        this.debug += '|';
+      }.bind(this), true);
     } else {
-      this.debug += ' ondevicemotion NOT working ';
+      this.debug += ' ondevicemotion NOT enabled ';
     }
   }
 
