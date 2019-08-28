@@ -9,8 +9,8 @@ import { WindowRef } from './windowRef';
 })
 export class AppComponent implements OnInit {
   songs: any[] = [];
-  // url: string = 'http://localhost:3000';
-  url: string = '';
+  url: string = 'http://localhost:3000';
+  // url: string = '';
   beta = '';
   gamma = '';
   alpha = '';
@@ -58,12 +58,14 @@ export class AppComponent implements OnInit {
 
   updateCoordsInDB = (coords: any) => {
     this.http.post(this.url + '/api/coords', coords).subscribe(data => {}, err => {
+      this.debug = err.message;
       console.log(`Error occured: ${err.message}`);
     });
   }
 
   updateSongInDB = (song: any) => {
     this.http.post(this.url + '/api/songs', song).subscribe(data => {}, err => {
+      this.debug = err.message;
       console.log(`Error occured: ${err.message}`);
     });
   }
