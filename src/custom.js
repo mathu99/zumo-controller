@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
             info = xyz.replace("X", Math.round(event.beta));
             info = info.replace("Y", Math.round(event.gamma));
             info = info.replace("Z", Math.round(event.alpha));
-            document.getElementById('ondeviceorientation').innerHTML = info;
+            document.getElementById('ondeviceorientation1').innerHTML = info;
         })
     }
     if ('ondevicemotion' in window) {
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
             info = xyz.replace("X", Math.round(event.acceleration.x));
             info = info.replace("Y", Math.round(event.acceleration.y));
             info = info.replace("Z", Math.round(event.acceleration.z));
-            document.getElementById('ondevicemotion').innerHTML = info;
+            document.getElementById('ondevicemotion1').innerHTML = info;
         })
     }
  });

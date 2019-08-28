@@ -11,12 +11,10 @@ export class AppComponent implements OnInit {
   songs: any[] = [];
   // url: string = 'http://localhost:3000';
   url: string = '';
-  x = '';
-  y = '';
-  z = '';
-  debug = 'Debug str: ';
-  rotation = '';
-  acceleration = '';
+  beta = '';
+  gamma = '';
+  alpha = '';
+  debug = 'Logs: ';
 
   constructor(private http: HttpClient, private winRef: WindowRef) {
     this.http.get(this.url + '/api/songs').subscribe(data => {
@@ -24,14 +22,6 @@ export class AppComponent implements OnInit {
     }, err => {
       console.log(`Error occured: ${err.message}`);
     });
-
-    // if ('ondevicemotion' in winRef.nativeWindow) {
-    //   this.debug = 'Device Motion API found';
-    //   winRef.nativeWindow.addEventListener('devicemotion', this.onDeviceMotion, false);
-    // } else {
-    //   this.debug = 'Device Motion not found';
-    // }
-    // winRef.nativeWindow.addEventListener("devicemotion", this.handleOrientation);
   }
 
   ngOnInit() {
@@ -43,17 +33,9 @@ export class AppComponent implements OnInit {
     if ('ondeviceorientation' in this.winRef.nativeWindow) {
       this.debug += ' ondeviceorientation enabled ';
       this.winRef.nativeWindow.addEventListener('deviceorientation', function(event) {
-        this.debug += '!';
-        // document.getElementById('cube').style.webkitTransform =
-        // document.getElementById('cube').style.transform =
-        //         'rotateX(' + event.beta + 'deg) ' +
-        //         'rotateY(' + event.gamma + 'deg) ' +
-        //         'rotateZ(' + event.alpha + 'deg)';
-
-        // document.getElementById('beta').innerHTML = Math.round(event.beta);
-        // document.getElementById('gamma').innerHTML = Math.round(event.gamma);
-        // document.getElementById('alpha').innerHTML = Math.round(event.alpha);
-        // document.getElementById('is-absolute').innerHTML = event.absolute ? "true" : "false";
+        this.alpha = Math.round(event.alpha);
+        this.gamma = Math.round(event.gamma);
+        this.beta = Math.round(event.beta);
      }.bind(this), true);
     } else {
       this.debug += ' ondeviceorientation NOT enabled ';
@@ -61,40 +43,11 @@ export class AppComponent implements OnInit {
     if ('ondevicemotion' in this.winRef.nativeWindow) {
       this.debug += ' ondevicemotion enabled ';
       this.winRef.nativeWindow.addEventListener('devicemotion', function(event) {
-        this.debug += '|';
+        // this.debug += '|';
       }.bind(this), true);
     } else {
       this.debug += ' ondevicemotion NOT enabled ';
     }
-  }
-
-  accelerationHandler(acceleration, targetId) {
-    var info, xyz = "[X, Y, Z]";
-    info = xyz.replace("X", acceleration.x && acceleration.x.toFixed(0));
-    info = info.replace("Y", acceleration.y && acceleration.y.toFixed(0));
-    info = info.replace("Z", acceleration.z && acceleration.z.toFixed(0));
-    this.acceleration = info;
-    // document.getElementById(targetId).innerHTML = info;
-  }
-
-  onDeviceMotion = (eventData) => {
-    this.debug += '-'
-    this.accelerationHandler(eventData.acceleration, 'moAccel');
-    this.accelerationHandler(eventData.accelerationIncludingGravity, 'moAccelGrav');
-    this.rotationHandler(eventData.rotationRate);
-    // this.intervalHandler(eventData.interval);
-  }
-  
-  rotationHandler(rotation) {
-    var info, xyz = "[X, Y, Z]";
-    info = xyz.replace("X", rotation.alpha && rotation.alpha.toFixed(0));
-    info = info.replace("Y", rotation.beta && rotation.beta.toFixed(0));
-    info = info.replace("Z", rotation.gamma && rotation.gamma.toFixed(0));
-    this.rotation = info;
-  }
-  
-  intervalHandler(interval) {
-    document.getElementById("moInterval").innerHTML = interval;
   }
 
   select = (song: any) => {

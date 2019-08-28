@@ -31,7 +31,6 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "src/custom.js"
             ]
           },
           "configurations": {
@@ -98,7 +97,6 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "src/custom.js"
             ]
           }
         },
