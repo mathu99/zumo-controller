@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   gamma = '';
   alpha = '';
   debug = 'Logs: ';
+  initialCoords = { zumoId:1, alpha:0, beta:0, gamma:0 };
 
   constructor(private http: HttpClient, private winRef: WindowRef) {
     this.http.get(this.url + '/api/songs').subscribe(data => {
@@ -31,17 +32,30 @@ export class AppComponent implements OnInit {
         let coords =  {
           zumoId: 1,
           alpha: Math.round(event.alpha),
-          gamma: Math.round(event.gamma),
-          beta: Math.round(event.beta),
+          gamma: this.convertForArduino(Math.round(event.gamma)),
+          beta: this.convertForArduino(Math.round(event.beta)),
         };
-        this.alpha = Math.round(event.alpha);
-        this.gamma = Math.round(event.gamma);
-        this.beta = Math.round(event.beta);
-        this.updateCoordsInDB(coords);
+        this.alpha = Math.round(coords.alpha);
+        this.gamma = Math.round(coords.gamma);
+        this.beta = Math.round(coords.beta);
+        if (this.initialCoords.gamma != coords.gamma || this.initialCoords.beta != coords.beta) { /* Persist to DB if updated */
+          this.initialCoords.gamma = coords.gamma;
+          this.initialCoords.beta = coords.beta;
+          this.updateCoordsInDB(coords);
+        }
      }.bind(this), true);
     } else {
       this.debug += ' ondeviceorientation NOT enabled';
     }
+  }
+
+  convertForArduino = (value: number) => {
+    if (value < -15) {
+      return -1;
+    } else if (value > 15) {
+      return 1;
+    }
+    return 0;
   }
 
   select = (song: any) => {
