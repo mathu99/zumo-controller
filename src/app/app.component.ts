@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WindowRef } from './windowRef';
 
@@ -7,14 +7,14 @@ import { WindowRef } from './windowRef';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   songs: any[] = [];
   // url: string = 'http://localhost:3000';
   url: string = '';
   x = '';
   y = '';
   z = '';
-  debug = 'Debug str ';
+  debug = 'Debug str: ';
   rotation = '';
   acceleration = '';
 
@@ -25,13 +25,42 @@ export class AppComponent {
       console.log(`Error occured: ${err.message}`);
     });
 
-    if ('DeviceMotionEvent' in winRef.nativeWindow) {
-      this.debug = 'Device Motion API found';
-      winRef.nativeWindow.addEventListener('devicemotion', this.onDeviceMotion, false);
-    } else {
-      this.debug = 'Device Motion not found';
-    }
+    // if ('ondevicemotion' in winRef.nativeWindow) {
+    //   this.debug = 'Device Motion API found';
+    //   winRef.nativeWindow.addEventListener('devicemotion', this.onDeviceMotion, false);
+    // } else {
+    //   this.debug = 'Device Motion not found';
+    // }
     // winRef.nativeWindow.addEventListener("devicemotion", this.handleOrientation);
+  }
+
+  ngOnInit() {
+    if ('ondeviceorientation' in this.winRef.nativeWindow) {
+      this.debug += ' ondeviceorientation working ';
+      this.winRef.nativeWindow.addEventListener('deviceorientation', function(event) {
+        this.debug += '-';
+        // document.getElementById('cube').style.webkitTransform =
+        // document.getElementById('cube').style.transform =
+        //         'rotateX(' + event.beta + 'deg) ' +
+        //         'rotateY(' + event.gamma + 'deg) ' +
+        //         'rotateZ(' + event.alpha + 'deg)';
+
+        // document.getElementById('beta').innerHTML = Math.round(event.beta);
+        // document.getElementById('gamma').innerHTML = Math.round(event.gamma);
+        // document.getElementById('alpha').innerHTML = Math.round(event.alpha);
+        // document.getElementById('is-absolute').innerHTML = event.absolute ? "true" : "false";
+     });
+    } else {
+      this.debug += ' ondeviceorientation NOT working ';
+    }
+    if ('ondevicemotion' in this.winRef.nativeWindow) {
+      this.debug += ' ondevicemotion working ';
+      this.winRef.nativeWindow.addEventListener('devicemotion', function(event) {
+        this.debug += '-';
+      });
+    } else {
+      this.debug += ' ondevicemotion NOT working ';
+    }
   }
 
   accelerationHandler(acceleration, targetId) {
