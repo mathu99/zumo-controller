@@ -27,14 +27,7 @@ export class AppComponent {
 
     if ('DeviceMotionEvent' in winRef.nativeWindow) {
       this.debug = 'Device Motion API found';
-      let onDeviceMotion = function (eventData) {
-        this.debug += '-'
-        this.accelerationHandler(eventData.acceleration, 'moAccel');
-        this.accelerationHandler(eventData.accelerationIncludingGravity, 'moAccelGrav');
-        this.rotationHandler(eventData.rotationRate);
-        // this.intervalHandler(eventData.interval);
-      }
-      winRef.nativeWindow.addEventListener('devicemotion', onDeviceMotion, false);
+      winRef.nativeWindow.addEventListener('devicemotion', this.onDeviceMotion, false);
     } else {
       this.debug = 'Device Motion not found';
     }
@@ -48,6 +41,14 @@ export class AppComponent {
     info = info.replace("Z", acceleration.z && acceleration.z.toFixed(0));
     this.acceleration = info;
     // document.getElementById(targetId).innerHTML = info;
+  }
+
+  onDeviceMotion = (eventData) => {
+    this.debug += '-'
+    this.accelerationHandler(eventData.acceleration, 'moAccel');
+    this.accelerationHandler(eventData.accelerationIncludingGravity, 'moAccelGrav');
+    this.rotationHandler(eventData.rotationRate);
+    // this.intervalHandler(eventData.interval);
   }
   
   rotationHandler(rotation) {
