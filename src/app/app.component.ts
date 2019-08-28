@@ -14,6 +14,9 @@ export class AppComponent {
   x = '';
   y = '';
   z = '';
+  debug = 'Debug str ';
+  rotation = '';
+  acceleration = '';
 
   constructor(private http: HttpClient, private winRef: WindowRef) {
     this.http.get(this.url + '/api/songs').subscribe(data => {
@@ -22,13 +25,40 @@ export class AppComponent {
       console.log(`Error occured: ${err.message}`);
     });
 
-    winRef.nativeWindow.addEventListener("devicemotion", this.handleOrientation);
+    if ('DeviceMotionEvent' in winRef.nativeWindow) {
+      this.debug = 'Device Motion API found';
+      let onDeviceMotion = function (eventData) {
+        this.accelerationHandler(eventData.acceleration, 'moAccel');
+        this.accelerationHandler(eventData.accelerationIncludingGravity, 'moAccelGrav');
+        this.rotationHandler(eventData.rotationRate);
+        // this.intervalHandler(eventData.interval);
+      }
+      winRef.nativeWindow.addEventListener('devicemotion', onDeviceMotion, false);
+    } else {
+      this.debug = 'Device Motion not found';
+    }
+    // winRef.nativeWindow.addEventListener("devicemotion", this.handleOrientation);
   }
 
-  handleOrientation = (event) => {
-    this.x = event.acceleration.x;
-    this.y = event.acceleration.y;
-    this.z = event.acceleration.z;
+  accelerationHandler(acceleration, targetId) {
+    var info, xyz = "[X, Y, Z]";
+    info = xyz.replace("X", acceleration.x && acceleration.x.toFixed(0));
+    info = info.replace("Y", acceleration.y && acceleration.y.toFixed(0));
+    info = info.replace("Z", acceleration.z && acceleration.z.toFixed(0));
+    this.acceleration = info;
+    // document.getElementById(targetId).innerHTML = info;
+  }
+  
+  rotationHandler(rotation) {
+    var info, xyz = "[X, Y, Z]";
+    info = xyz.replace("X", rotation.alpha && rotation.alpha.toFixed(0));
+    info = info.replace("Y", rotation.beta && rotation.beta.toFixed(0));
+    info = info.replace("Z", rotation.gamma && rotation.gamma.toFixed(0));
+    this.rotation = info;
+  }
+  
+  intervalHandler(interval) {
+    document.getElementById("moInterval").innerHTML = interval;
   }
 
   select = (song: any) => {
