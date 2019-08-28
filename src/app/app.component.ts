@@ -38,13 +38,12 @@ export class AppComponent implements OnInit {
 
     this.winRef.nativeWindow.addEventListener('click', function() {
       this.debug += '+';
-    }.bind(this), false);
+    }.bind(this), true);
 
     if ('ondeviceorientation' in this.winRef.nativeWindow) {
       this.debug += ' ondeviceorientation enabled ';
       this.winRef.nativeWindow.addEventListener('deviceorientation', function(event) {
         this.debug += '!';
-        this.winRef.nativeWindow.alert('deviceorientation');
         // document.getElementById('cube').style.webkitTransform =
         // document.getElementById('cube').style.transform =
         //         'rotateX(' + event.beta + 'deg) ' +
@@ -62,7 +61,6 @@ export class AppComponent implements OnInit {
     if ('ondevicemotion' in this.winRef.nativeWindow) {
       this.debug += ' ondevicemotion enabled ';
       this.winRef.nativeWindow.addEventListener('devicemotion', function(event) {
-        this.winRef.nativeWindow.alert('devicemotion');
         this.debug += '|';
       }.bind(this), true);
     } else {
