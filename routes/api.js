@@ -59,9 +59,9 @@ router.post('/coords', function(req, res) {
 /* API consumed by Arduino */
 
 router.get("/selectedTrackNumber", function(req, res) {
-    Song.find({'selected':true}, function (err, songs) {
+    Song.find({'selected':true, 'zumoId':+req.query.zumoId}, function (err, songs) {
         if (err) {
-            res.send(400, 'No Songs Found');
+            res.send(400, 'Songs Not Found');
         } else {
             let song = {trackNumber: 0};
             if (!songs || songs.length == 0) {
@@ -77,7 +77,7 @@ router.get("/selectedTrackNumber", function(req, res) {
 router.get("/currentCoords", function(req, res) {
     Coords.find({'zumoId':req.query.zumoId}, function (err, coords) {
         if (err) {
-            res.send(400, 'No Coords Found');
+            res.send(400, 'Coords Not Found');
         } else {
             let resposne = {coordinates:`${coords[0].gamma}|${coords[0].beta}`};
             res.send(JSON.stringify(resposne));

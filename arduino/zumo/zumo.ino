@@ -8,26 +8,36 @@
 #include <ZumoShield.h>
 #include <string.h>
 
-HttpRequest coordRequest("http://zumo-controller.herokuapp.com/api/currentCoords?zumoId=1");  /* Zumo Navigation */
-HttpRequest songRequest("http://zumo-controller.herokuapp.com/api/selectedTrackNumber");  /* Music to play on Buzzer */
+HttpRequest coordRequest("http://zumo-controller.herokuapp.com/api/currentCoords");  /* Zumo Navigation Request */
+HttpRequest songRequest("http://zumo-controller.herokuapp.com/api/selectedTrackNumber");  /* Music to play on Buzzer Request */
+ZumoBuzzer buzzer;
 ZumoMotors motors;
-const int SPEED = 400;
+const int SPEED = 400;  /* Zumo Speed */
+const int LED_PIN = 13;
+const int ZUMO_ID = 1; /* ID of Zumo to get actions for */
 
 void setup() {
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH); /* Start setup */
+  Terminal.println("Initializing requests to Zumo-Controller...");
   OneSheeld.begin();
+  coordRequest.addParameter("zumoId", ZUMO_ID);
   coordRequest.setOnSuccess(&onCoordsSuccess); /* Subscribe to success callback for the request. */
   coordRequest.getResponse().setOnJsonResponse(&onCoordsReply);  /* Subscribe to json value replies. */
   coordRequest.getResponse().setOnError(&onResponseError);
+  songRequest.addParameter("zumoId", ZUMO_ID);
   songRequest.setOnSuccess(&onSongSuccess); /* Subscribe to success callback for the request. */
   songRequest.getResponse().setOnJsonResponse(&onSongReply);  /* Subscribe to json value replies. */
   songRequest.getResponse().setOnError(&onResponseError);
   Internet.setOnError(&onInternetError); 
+  Terminal.println("Initialized.");
+  digitalWrite(LED_PIN, LOW); /* End setup */
 }
 
 void loop() {
   Internet.performGet(coordRequest);
   Internet.performGet(songRequest);
-//  OneSheeld.delay(60000*1);
+//  OneSheeld.delay(60000); /* 1 min */
 }
 
 void onCoordsSuccess(HttpResponse & response) {
@@ -51,17 +61,14 @@ void onCoordsReply(JsonKeyChain & hell, char * output) {
 }
 
 void onSongSuccess(HttpResponse & response) {
-  response["trackNumber"].query();  /* Get gamma|beta from phone */ 
+  response["trackNumber"].query();  /* Play/pause the selected track */ 
 }
 
 void onSongReply(JsonKeyChain & hell, char * output) {
   Terminal.println("onSongReply");
-  
 }
 
-
-
-void onResponseError(int errorNumber) {
+void onResponseError(int errorNumber) { /* Generic Resposne Error Handler */
   Terminal.print("Response error:");
   switch(errorNumber) {
     case INDEX_OUT_OF_BOUNDS: Terminal.println("INDEX_OUT_OF_BOUNDS");break;
@@ -75,7 +82,7 @@ void onResponseError(int errorNumber) {
   }
 }
 
-void onInternetError(int requestId, int errorNumber) {
+void onInternetError(int requestId, int errorNumber) { /* Generic Internet Error Handler */
   Terminal.print("Request id:");
   Terminal.println(requestId);
   Terminal.print("Internet error:");

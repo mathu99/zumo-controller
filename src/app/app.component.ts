@@ -54,15 +54,15 @@ export class AppComponent implements OnInit {
   updateDebugText = () => {
     let terms = [];
     if (this.convertForArduino(+this.gamma) > 0) {
-      terms.push(`Turning Right`);
+      terms.push('Turning Right');
     } else if (this.convertForArduino(+this.gamma) < 0) {
-      terms.push(`Turning Left`)
+      terms.push('Turning Left')
     } else if (this.convertForArduino(+this.beta) > 0) {
-      terms.push(`Reversing`);
+      terms.push('Reversing');
     } else if (this.convertForArduino(+this.beta) < 0) {
-      terms.push(`Going forward`);
+      terms.push('Going forward');
     }
-    if (terms.length == 0) {
+    if (terms.length === 0) {
       terms.push('Zumo is Stationary');
     }
     terms.push(`[${this.gamma},${this.beta}]`)
