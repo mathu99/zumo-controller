@@ -1,11 +1,39 @@
-<mat-selection-list>
-  <mat-list-option *ngFor="let song of songs" (click)="select(song)">
-    <i matListAvatar *ngIf="!song.selected" class="material-icons">play_circle_outline</i>
-    <i matListAvatar *ngIf="song.selected" class="material-icons">pause_circle_outline</i>
-    <h3 matLine> {{song.trackNumber}}. {{song.name}} </h3>
-  </mat-list-option>
-</mat-selection-list>
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar>
+        <i class="material-icons">queue_music</i>
+    </div>
+    <mat-card-title>Track Selection</mat-card-title>
+    <mat-card-subtitle>Choose your song</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-selection-list>
+      <mat-list-option *ngFor="let song of songs" (click)="select(song)">
+        <i matListAvatar *ngIf="!song.selected" class="material-icons">play_circle_outline</i>
+        <i matListAvatar *ngIf="song.selected" class="material-icons">pause_circle_outline</i>
+        <h3 matLine> {{song.trackNumber}}. {{song.name}} </h3>
+      </mat-list-option>
+    </mat-selection-list>
+  </mat-card-content>
+</mat-card>
+<br>
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar>
+        <i class="material-icons">settings_remote</i>
+    </div>
+    <mat-card-title> Zumo Logs</mat-card-title>
+    <mat-card-subtitle>{{deviceEnabled}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p>
+      {{debug}}
+    </p>
+  </mat-card-content>
+</mat-card>
 
-<h3>{{debug}}</h3>
+
+
+<!-- <h3>{{debug}}</h3>
 <h5>{{ogBeta}} -- {{ogGamma}}</h5>
-<h5>{{beta}} -- {{gamma}}</h5>
+<h5>{{beta}} -- {{gamma}}</h5> -->

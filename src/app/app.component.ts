@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   gamma = '';
   alpha = '';
   debug = 'Logs: ';
+  deviceEnabled = '';
   initialCoords = { zumoId:1, alpha:0, beta:0, gamma:0 };
 
   constructor(private http: HttpClient, private winRef: WindowRef) {
@@ -27,7 +28,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     if ('ondeviceorientation' in this.winRef.nativeWindow) {
-      this.debug += ' ondeviceorientation enabled';
+      this.deviceEnabled = ' ondeviceorientation is enabled';
       this.winRef.nativeWindow.addEventListener('deviceorientation', function(event) {
         let coords =  {
           zumoId: 1,
@@ -44,11 +45,31 @@ export class AppComponent implements OnInit {
           this.initialCoords.gamma = coords.gamma;
           this.initialCoords.beta = coords.beta;
           this.updateCoordsInDB(coords);
+          
         }
+        this.updateDebugText(); /* Log actions */
      }.bind(this), true);
     } else {
-      this.debug += ' ondeviceorientation NOT enabled';
+      this.deviceEnabled = 'ondeviceorientation NOT enabled';
     }
+  }
+
+  updateDebugText = () => {
+    let terms = [];
+    if (+this.gamma > 0) {
+      terms.push(`Turning Right (${this.gamma})`);
+    } else if (+this.gamma < 0) {
+      terms.push(`Turning Left (${this.gamma})`)
+    }
+    if (+this.beta > 0) {
+      terms.push(`Reversing (${this.beta})`);
+    } else if (+this.beta > 0) {
+      terms.push(`Going forward (${this.beta})`);
+    }
+    if (terms.length == 0) {
+      terms.push('Zumo is Stationary');
+    }
+    this.debug = terms.join(', ');
   }
 
   convertForArduino = (value: number) => {
