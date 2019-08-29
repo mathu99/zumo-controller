@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
     this.http.get(this.url + '/api/songs').subscribe(data => {
       this.songs = <any> data;
     }, err => {
-      console.log(`Error occured: ${err.message}`);
+      this.debug = `Error occured: ${err.message}`;
     });
   }
 
@@ -54,18 +54,19 @@ export class AppComponent implements OnInit {
   updateDebugText = () => {
     let terms = [];
     if (+this.initialCoords.gamma > 0) {
-      terms.push(`Turning Right (${this.gamma})`);
+      terms.push(`Turning Right`);
     } else if (+this.initialCoords.gamma < 0) {
-      terms.push(`Turning Left (${this.gamma})`)
+      terms.push(`Turning Left`)
     }
     if (+this.initialCoords.beta > 0) {
-      terms.push(`Reversing (${this.initialCoords.beta})`);
+      terms.push(`Reversing`);
     } else if (+this.initialCoords.beta < 0) {
-      terms.push(`Going forward (${this.initialCoords.beta})`);
+      terms.push(`Going forward`);
     }
     if (terms.length == 0) {
       terms.push('Zumo is Stationary');
     }
+    terms.push(`[${this.gamma},${this.beta}}]`)
     this.debug = terms.join(', ');
   }
 
@@ -93,14 +94,12 @@ export class AppComponent implements OnInit {
   updateCoordsInDB = (coords: any) => {
     this.http.post(this.url + '/api/coords', coords).subscribe(data => {}, err => {
       this.debug = err.message;
-      console.log(`Error occured: ${err.message}`);
     });
   }
 
   updateSongInDB = (song: any) => {
     this.http.post(this.url + '/api/songs', song).subscribe(data => {}, err => {
       this.debug = err.message;
-      console.log(`Error occured: ${err.message}`);
     });
   }
 
