@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   beta = '';
   gamma = '';
   alpha = '';
-  debug = 'Logs: ';
+  debug = 'No logs currently';
   deviceEnabled = '';
   initialCoords = { zumoId:1, alpha:0, beta:0, gamma:0 };
 
@@ -43,9 +43,8 @@ export class AppComponent implements OnInit {
           this.initialCoords.gamma = coords.gamma;
           this.initialCoords.beta = coords.beta;
           this.updateCoordsInDB(coords);
-          
+          this.updateDebugText(); /* Log actions */
         }
-        this.updateDebugText(); /* Log actions */
      }.bind(this), true);
     } else {
       this.deviceEnabled = 'ondeviceorientation NOT enabled';
@@ -54,15 +53,15 @@ export class AppComponent implements OnInit {
 
   updateDebugText = () => {
     let terms = [];
-    if (+this.gamma > 0) {
+    if (+this.initialCoords.gamma > 0) {
       terms.push(`Turning Right (${this.gamma})`);
-    } else if (+this.gamma < 0) {
+    } else if (+this.initialCoords.gamma < 0) {
       terms.push(`Turning Left (${this.gamma})`)
     }
-    if (+this.beta > 0) {
-      terms.push(`Reversing (${this.beta})`);
-    } else if (+this.beta < 0) {
-      terms.push(`Going forward (${this.beta})`);
+    if (+this.initialCoords.beta > 0) {
+      terms.push(`Reversing (${this.initialCoords.beta})`);
+    } else if (+this.initialCoords.beta < 0) {
+      terms.push(`Going forward (${this.initialCoords.beta})`);
     }
     if (terms.length == 0) {
       terms.push('Zumo is Stationary');
