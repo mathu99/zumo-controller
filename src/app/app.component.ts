@@ -36,11 +36,9 @@ export class AppComponent implements OnInit {
           gamma: this.convertForArduino(Math.round(event.gamma)),
           beta: this.convertForArduino(Math.round(event.beta)),
         };
-        this.alpha = Math.round(coords.alpha);
-        this.gamma = Math.round(coords.gamma);
-        this.beta = Math.round(coords.beta);
-        this.ogGamma = Math.round(event.gamma);
-        this.ogBeta = Math.round(event.beta);
+        this.alpha = Math.round(event.alpha);
+        this.gamma = Math.round(event.gamma);
+        this.beta = Math.round(event.beta);
         if (this.initialCoords.gamma != coords.gamma || this.initialCoords.beta != coords.beta) { /* Persist to DB if updated */
           this.initialCoords.gamma = coords.gamma;
           this.initialCoords.beta = coords.beta;
@@ -63,7 +61,7 @@ export class AppComponent implements OnInit {
     }
     if (+this.beta > 0) {
       terms.push(`Reversing (${this.beta})`);
-    } else if (+this.beta > 0) {
+    } else if (+this.beta < 0) {
       terms.push(`Going forward (${this.beta})`);
     }
     if (terms.length == 0) {
