@@ -8,7 +8,7 @@ import { WindowRef } from './windowRef';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  songs: any[] = [];
+  songs: any = [];
   // url: string = 'http://localhost:3000';
   url: string = '';
   beta = '';
@@ -38,6 +38,8 @@ export class AppComponent implements OnInit {
         this.alpha = Math.round(coords.alpha);
         this.gamma = Math.round(coords.gamma);
         this.beta = Math.round(coords.beta);
+        this.ogGamma = Math.round(event.gamma);
+        this.ogBeta = Math.round(event.beta);
         if (this.initialCoords.gamma != coords.gamma || this.initialCoords.beta != coords.beta) { /* Persist to DB if updated */
           this.initialCoords.gamma = coords.gamma;
           this.initialCoords.beta = coords.beta;
