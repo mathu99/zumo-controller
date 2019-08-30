@@ -63,7 +63,7 @@ router.get("/selectedTrackNumber", function(req, res) {
         if (err) {
             res.send(400, 'Songs Not Found');
         } else {
-            let song = {trackNumber: 0};
+            let song = {trackNumber: "0"};
             if (!songs || songs.length == 0) {
                 res.send(JSON.stringify(song));
             } else {
