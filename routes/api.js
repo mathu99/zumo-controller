@@ -58,6 +58,22 @@ router.post('/coords', function(req, res) {
 
 /* API consumed by Arduino */
 
+router.get('/zumoControls', function(req, res) { /* Get everything at once, seperated by pipes */
+    var queries = [
+        Song.find({'selected':true, 'zumoId':+req.query.zumoId}).exec(),
+        Coords.find({'zumoId':req.query.zumoId}).exec(),
+    ],
+    parts = [];
+
+    Promise.all(queries).then(function([song, coords]) {
+        parts.push((song.length > 0 ? song[0].trackNumber.toString() : '0'));
+        parts.push(coords.length > 0 ? `${coords[0].gamma}|${coords[0].beta}` : '0|0');
+        res.send(parts.join('|'));
+    }).catch(function(err){
+        res.send(400, `Error occured - ${err}`);
+    });
+})
+
 router.get("/selectedTrackNumber", function(req, res) {
     Song.find({'selected':true, 'zumoId':+req.query.zumoId}, function (err, songs) {
         if (err) {

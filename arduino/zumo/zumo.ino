@@ -23,29 +23,41 @@ unsigned char note[MELODY_LENGTH1] =
 {
   NOTE_E(5), SILENT_NOTE, NOTE_E(5), SILENT_NOTE, NOTE_E(5), SILENT_NOTE, NOTE_C(5), NOTE_E(5),
   NOTE_G(5), SILENT_NOTE, NOTE_G(4), SILENT_NOTE,
+
   NOTE_C(5), NOTE_G(4), SILENT_NOTE, NOTE_E(4), NOTE_A(4), NOTE_B(4), NOTE_B_FLAT(4), NOTE_A(4), NOTE_G(4),
   NOTE_E(5), NOTE_G(5), NOTE_A(5), NOTE_F(5), NOTE_G(5), SILENT_NOTE, NOTE_E(5), NOTE_C(5), NOTE_D(5), NOTE_B(4),
+
   NOTE_C(5), NOTE_G(4), SILENT_NOTE, NOTE_E(4), NOTE_A(4), NOTE_B(4), NOTE_B_FLAT(4), NOTE_A(4), NOTE_G(4),
   NOTE_E(5), NOTE_G(5), NOTE_A(5), NOTE_F(5), NOTE_G(5), SILENT_NOTE, NOTE_E(5), NOTE_C(5), NOTE_D(5), NOTE_B(4),
+
   SILENT_NOTE, NOTE_G(5), NOTE_F_SHARP(5), NOTE_F(5), NOTE_D_SHARP(5), NOTE_E(5), SILENT_NOTE,
   NOTE_G_SHARP(4), NOTE_A(4), NOTE_C(5), SILENT_NOTE, NOTE_A(4), NOTE_C(5), NOTE_D(5),
+
   SILENT_NOTE, NOTE_G(5), NOTE_F_SHARP(5), NOTE_F(5), NOTE_D_SHARP(5), NOTE_E(5), SILENT_NOTE,
   NOTE_C(6), SILENT_NOTE, NOTE_C(6), SILENT_NOTE, NOTE_C(6),
+
   SILENT_NOTE, NOTE_G(5), NOTE_F_SHARP(5), NOTE_F(5), NOTE_D_SHARP(5), NOTE_E(5), SILENT_NOTE,
   NOTE_G_SHARP(4), NOTE_A(4), NOTE_C(5), SILENT_NOTE, NOTE_A(4), NOTE_C(5), NOTE_D(5),
+
   SILENT_NOTE, NOTE_E_FLAT(5), SILENT_NOTE, NOTE_D(5), NOTE_C(5)
 };
 
 unsigned int duration[MELODY_LENGTH1] =
 {
   100, 25, 125, 125, 125, 125, 125, 250, 250, 250, 250, 250,
+
   375, 125, 250, 375, 250, 250, 125, 250, 167, 167, 167, 250, 125, 125,
   125, 250, 125, 125, 375,
+
   375, 125, 250, 375, 250, 250, 125, 250, 167, 167, 167, 250, 125, 125,
   125, 250, 125, 125, 375,
+
   250, 125, 125, 125, 250, 125, 125, 125, 125, 125, 125, 125, 125, 125,
+
   250, 125, 125, 125, 250, 125, 125, 200, 50, 100, 25, 500,
+
   250, 125, 125, 125, 250, 125, 125, 125, 125, 125, 125, 125, 125, 125,
+
   250, 250, 125, 375, 500
 };
 
@@ -54,9 +66,9 @@ void setup() {
   Terminal.println("Initializing requests to Zumo-Controller...");
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH); /* Start setup */
-  coordRequest.setOnSuccess(&onCoordsSuccess); /* Subscribe to success callback for the request. */
-  coordRequest.getResponse().setOnJsonResponse(&onCoordsReply);  /* Subscribe to json value replies. */
-  coordRequest.getResponse().setOnError(&onResponseError);
+//  coordRequest.setOnSuccess(&onCoordsSuccess); /* Subscribe to success callback for the request. */
+//  coordRequest.getResponse().setOnJsonResponse(&onCoordsReply);  /* Subscribe to json value replies. */
+//  coordRequest.getResponse().setOnError(&onResponseError);
   songRequest.setOnSuccess(&onSongSuccess); /* Subscribe to success callback for the request. */
   songRequest.getResponse().setOnJsonResponse(&onSongReply);  /* Subscribe to json value replies. */
   songRequest.getResponse().setOnError(&onResponseError);
@@ -66,11 +78,12 @@ void setup() {
 }
 
 void loop() {
-  Terminal.println("Testing...");
+  digitalWrite(LED_PIN, HIGH); /* ON */
 //  Internet.performGet(coordRequest);
   Internet.performGet(songRequest);
 //  OneSheeld.delay(5000);
 //  OneSheeld.delay(60000); /* 1 min */
+  digitalWrite(LED_PIN, LOW); /* OFF */
 }
 
 void onCoordsSuccess(HttpResponse & response) {
@@ -98,8 +111,8 @@ void onSongSuccess(HttpResponse & response) {
   response["trackNumber"].query();  /* Play/pause the selected track */ 
 }
 
-void onSongReply(JsonKeyChain & hell, int output) {
-  Terminal.println(output);
+void onSongReply(JsonKeyChain & hell, char * output) {
+  currentSong = atoi(output);
   if (currentIdx < MELODY_LENGTH1 && !buzzer.isPlaying() && currentSong == 1)
   {
     Terminal.println("play note");
@@ -109,7 +122,6 @@ void onSongReply(JsonKeyChain & hell, int output) {
 
   if (currentSong == 0)
   {
-    Terminal.println("stop play");
     buzzer.stopPlaying(); // silence the buzzer
     if (currentIdx < MELODY_LENGTH1)
       currentIdx = MELODY_LENGTH1;        // terminate the melody
@@ -133,13 +145,14 @@ void onResponseError(int errorNumber) { /* Generic Resposne Error Handler */
 }
 
 void onInternetError(int requestId, int errorNumber) { /* Generic Internet Error Handler */
-//  Terminal.print("Request id:");
-//  Terminal.println(requestId);
-//  switch(errorNumber) {
-//    case REQUEST_CAN_NOT_BE_FOUND: Terminal.println("REQUEST_CAN_NOT_BE_FOUND");break;
-//    case NOT_CONNECTED_TO_NETWORK: Terminal.println("NOT_CONNECTED_TO_NETWORK");break;
-//    case URL_IS_NOT_FOUND: Terminal.println("URL_IS_NOT_FOUND");break;
-//    case ALREADY_EXECUTING_REQUEST: Terminal.println("ALREADY_EXECUTING_REQUEST");break;
-//    case URL_IS_WRONG: Terminal.println("URL_IS_WRONG");break;
-//  }
+  Terminal.print("Request id:");
+  Terminal.println(requestId);
+  Terminal.println(errorNumber);
+  switch(errorNumber) {
+    case REQUEST_CAN_NOT_BE_FOUND: Terminal.println("REQUEST_CAN_NOT_BE_FOUND");break;
+    case NOT_CONNECTED_TO_NETWORK: Terminal.println("NOT_CONNECTED_TO_NETWORK");break;
+    case URL_IS_NOT_FOUND: Terminal.println("URL_IS_NOT_FOUND");break;
+    case ALREADY_EXECUTING_REQUEST: Terminal.println("ALREADY_EXECUTING_REQUEST");break;
+    case URL_IS_WRONG: Terminal.println("URL_IS_WRONG");break;
+  }
 }
