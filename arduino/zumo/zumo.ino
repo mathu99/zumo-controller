@@ -8,8 +8,7 @@
 #include <ZumoShield.h>
 #include <string.h>
 
-HttpRequest coordRequest("https://zumo-controller.herokuapp.com/api/currentCoords?zumoId=1");  /* Zumo Navigation Request */
-HttpRequest songRequest("https://zumo-controller.herokuapp.com/api/selectedTrackNumber?zumoId=1");  /* Music to play on Buzzer Request */
+HttpRequest apiRequest("https://zumo-controller.herokuapp.com/api/zumoControls?zumoId=1");  /* Zumo API Request */
 ZumoBuzzer buzzer;
 ZumoMotors motors;
 const int SPEED = 400;  /* Zumo Speed */
@@ -66,24 +65,16 @@ void setup() {
   Terminal.println("Initializing requests to Zumo-Controller...");
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH); /* Start setup */
-//  coordRequest.setOnSuccess(&onCoordsSuccess); /* Subscribe to success callback for the request. */
-//  coordRequest.getResponse().setOnJsonResponse(&onCoordsReply);  /* Subscribe to json value replies. */
-//  coordRequest.getResponse().setOnError(&onResponseError);
-  songRequest.setOnSuccess(&onSongSuccess); /* Subscribe to success callback for the request. */
-  songRequest.getResponse().setOnJsonResponse(&onSongReply);  /* Subscribe to json value replies. */
-  songRequest.getResponse().setOnError(&onResponseError);
+  apiRequest.setOnSuccess(&onApiSuccess); /* Subscribe to success callback for the request. */
+  apiRequest.getResponse().setOnJsonResponse(&onApiReply);  /* Subscribe to json value replies. */
+  apiRequest.getResponse().setOnError(&onResponseError);
   Internet.setOnError(&onInternetError); 
   digitalWrite(LED_PIN, LOW); /* End setup */
   Terminal.println("Initialized!");
 }
 
 void loop() {
-  digitalWrite(LED_PIN, HIGH); /* ON */
-//  Internet.performGet(coordRequest);
-  Internet.performGet(songRequest);
-//  OneSheeld.delay(5000);
-//  OneSheeld.delay(60000); /* 1 min */
-  digitalWrite(LED_PIN, LOW); /* OFF */
+  Internet.performGet(apiRequest);
 }
 
 void onCoordsSuccess(HttpResponse & response) {
@@ -107,12 +98,14 @@ void onCoordsReply(JsonKeyChain & hell, char * output) {
   }  
 }
 
-void onSongSuccess(HttpResponse & response) {
-  response["trackNumber"].query();  /* Play/pause the selected track */ 
+void onApiSuccess(HttpResponse & response) {
+  response["zumoControls"].query();  /* Play/pause the selected track */ 
 }
 
-void onSongReply(JsonKeyChain & hell, char * output) {
-  currentSong = atoi(output);
+void onApiReply(JsonKeyChain & hell, char * output) {
+  int gamma, beta, currentSong;
+  sscanf(output, "%d|%d|%d", &currentSong, &gamma, &beta);
+
   if (currentIdx < MELODY_LENGTH1 && !buzzer.isPlaying() && currentSong == 1)
   {
     Terminal.println("play note");

@@ -68,7 +68,8 @@ router.get('/zumoControls', function(req, res) { /* Get everything at once, sepe
     Promise.all(queries).then(function([song, coords]) {
         parts.push((song.length > 0 ? song[0].trackNumber.toString() : '0'));
         parts.push(coords.length > 0 ? `${coords[0].gamma}|${coords[0].beta}` : '0|0');
-        res.send(parts.join('|'));
+        let response = {'zumoControls':parts.join('|')};
+        res.send(JSON.stringify(response));
     }).catch(function(err){
         res.send(400, `Error occured - ${err}`);
     });
