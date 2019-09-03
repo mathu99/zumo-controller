@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   beta = '';
   gamma = '';
   alpha = '';
-  speed = '200';
+  speed = '0';
   debug = 'No logs currently';
   deviceEnabled = '';
   initialCoords = { zumoId:1, alpha:0, beta:0, gamma:0 };

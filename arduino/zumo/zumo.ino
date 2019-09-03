@@ -11,10 +11,12 @@
 HttpRequest apiRequest("https://zumo-controller.herokuapp.com/api/zumoControls?zumoId=1");  /* Zumo API Request */
 ZumoBuzzer buzzer;
 ZumoMotors motors;
-const int SPEED = 400;  /* Zumo Speed */
+
 const int LED_PIN = 13;
 unsigned char currentIdx;
 int currentSong = 0;
+int speed = 200;  /* Zumo Speed */
+
 #define MELODY_LENGTH1 95
 
 // These arrays take up a total of 285 bytes of RAM (out of a limit of 1k (ATmega168), 2k (ATmega328), or 2.5k(ATmega32U4))
@@ -86,13 +88,13 @@ void onCoordsReply(JsonKeyChain & hell, char * output) {
   int gamma, beta;
   sscanf(output, "%d|%d", &gamma, &beta);
   if (beta == -1) {  //Forward
-    motors.setSpeeds(SPEED, SPEED);
+    motors.setSpeeds(speed, speed);
   } else if (beta == 1) { //Reverse
-    motors.setSpeeds(-SPEED, -SPEED);
+    motors.setSpeeds(-speed, -speed);
   } else if (gamma == -1) { //Left
-    motors.setSpeeds(-SPEED/2, SPEED/2);
+    motors.setSpeeds(-speed/2, speed/2);
   } else if (gamma == 1) { //Right
-    motors.setSpeeds(SPEED/2, -SPEED/2);
+    motors.setSpeeds(speed/2, -speed/2);
   } else {
     motors.setSpeeds(0, 0);
   }  
@@ -104,7 +106,7 @@ void onApiSuccess(HttpResponse & response) {
 
 void onApiReply(JsonKeyChain & hell, char * output) {
   int gamma, beta, currentSong;
-  sscanf(output, "%d|%d|%d", &currentSong, &gamma, &beta);
+  sscanf(output, "%d|%d|%d|%d", &currentSong, &gamma, &beta, &speed);
 
   if (currentIdx < MELODY_LENGTH1 && !buzzer.isPlaying() && currentSong == 1)
   {
