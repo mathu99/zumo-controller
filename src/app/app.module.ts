@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon'; 
 import { MatListModule } from '@angular/material/list';
+import { MatSliderModule } from '@angular/material/slider';
 import { WindowRef } from './windowRef';
 
 @NgModule({
@@ -19,7 +20,8 @@ import { WindowRef } from './windowRef';
     AppRoutingModule,
     HttpClientModule,
     MatCardModule,
-    MatListModule
+    MatListModule,
+    MatSliderModule
   ],
   providers: [WindowRef],
   bootstrap: [AppComponent]

@@ -20,6 +20,19 @@
 <mat-card>
   <mat-card-header>
     <div mat-card-avatar>
+        <i class="material-icons">settings_applications</i>
+    </div>
+    <mat-card-title> Configure Zumo</mat-card-title>
+    <mat-card-subtitle>Adjust Zumo Settings</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    Speed: <mat-slider (change)="updateSpeed($event)" min="0" max="400" step="10" [value]="speed"></mat-slider>
+  </mat-card-content>
+</mat-card>
+<br>
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar>
         <i class="material-icons">settings_remote</i>
     </div>
     <mat-card-title> Zumo Logs</mat-card-title>
@@ -31,9 +44,3 @@
     </p>
   </mat-card-content>
 </mat-card>
-
-
-
-<!-- <h3>{{debug}}</h3>
-<h5>{{ogBeta}} -- {{ogGamma}}</h5>
-<h5>{{beta}} -- {{gamma}}</h5> -->

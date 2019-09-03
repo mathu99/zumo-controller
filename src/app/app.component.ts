@@ -14,6 +14,7 @@ export class AppComponent implements OnInit {
   beta = '';
   gamma = '';
   alpha = '';
+  speed = '200';
   debug = 'No logs currently';
   deviceEnabled = '';
   initialCoords = { zumoId:1, alpha:0, beta:0, gamma:0 };
@@ -21,6 +22,11 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient, private winRef: WindowRef) {
     this.http.get(this.url + '/api/songs').subscribe(data => {
       this.songs = <any> data;
+    }, err => {
+      this.debug = `Error occured: ${err.message}`;
+    });
+    this.http.get(this.url + '/api/config?zumoId=1').subscribe(data => {
+      this.speed = <any> data[0].speed;
     }, err => {
       this.debug = `Error occured: ${err.message}`;
     });
@@ -87,6 +93,17 @@ export class AppComponent implements OnInit {
         e.selected = false;
         this.updateSongInDB(e);
       }
+    });
+  }
+
+  updateSpeed = (event: any) => {
+    this.speed = event.value;
+    let config = {
+      zumoId: 1,
+      speed: this.speed,
+    }
+    this.http.post(this.url + '/api/config', config).subscribe(data => {}, err => {
+      this.debug = err.message;
     });
   }
 

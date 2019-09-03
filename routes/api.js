@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Song = require("../models/song");
 var Coords = require("../models/coords");
+var Config = require("../models/config");
 
 router.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
@@ -23,6 +24,16 @@ router.get("/songs", function(req, res) {
     Song.find({}, function (err, songs) {
         if (err) {
             res.send(400, 'No Songs Found');
+        } else {
+            res.send(songs);
+        }
+    });
+});
+
+router.get("/config", function(req, res) {
+    Config.find({zumoId:req.query.zumoId}, function (err, songs) {
+        if (err) {
+            res.send(400, 'No Config Found');
         } else {
             res.send(songs);
         }
@@ -56,18 +67,34 @@ router.post('/coords', function(req, res) {
     })
 });
 
+router.post('/config', function(req, res) {
+    let query = {'zumoId': req.body.zumoId},
+        config = {
+            zumoId: req.body.zumoId,
+            speed: req.body.speed,
+        };
+    Config.findOneAndUpdate(query, config, {upsert:true, runValidators:true}, function(err, doc){
+        if (err) {
+            return res.status(500).send({ success: false, msg: 'Config save failed. ' + err });
+        }
+        res.json({ success: true, msg: 'Successfully updated config.' });
+    })
+});
+
 /* API consumed by Arduino */
 
 router.get('/zumoControls', function(req, res) { /* Get everything at once, seperated by pipes */
     var queries = [
         Song.find({'selected':true, 'zumoId':+req.query.zumoId}).exec(),
         Coords.find({'zumoId':req.query.zumoId}).exec(),
+        Config.find({'zumoId':req.query.zumoId}).exec(),
     ],
     parts = [];
 
-    Promise.all(queries).then(function([song, coords]) {
+    Promise.all(queries).then(function([song, coords, config]) {
         parts.push((song.length > 0 ? song[0].trackNumber.toString() : '0'));
         parts.push(coords.length > 0 ? `${coords[0].gamma}|${coords[0].beta}` : '0|0');
+        parts.push(config.length > 0 ? config[0].speed : '200');
         let response = {'zumoControls':parts.join('|')};
         res.send(JSON.stringify(response));
     }).catch(function(err){
