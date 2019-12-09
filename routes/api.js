@@ -6,7 +6,7 @@ var Config = require("../models/config");
 var Email = require("../models/email");
 
 router.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200,http://www.focus1.co.za');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
     res.setHeader('Access-Control-Allow-Accept', 'application/json');
     res.setHeader('Access-Control-Allow-Headers', 'content-type');
