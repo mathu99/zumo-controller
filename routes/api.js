@@ -3,6 +3,7 @@ var router = express.Router();
 var Song = require("../models/song");
 var Coords = require("../models/coords");
 var Config = require("../models/config");
+var Email = require("../models/email");
 
 router.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
@@ -74,6 +75,19 @@ router.post('/config', function(req, res) {
             speed: req.body.speed,
         };
     Config.findOneAndUpdate(query, config, {upsert:true, runValidators:true}, function(err, doc){
+        if (err) {
+            return res.status(500).send({ success: false, msg: 'Config save failed. ' + err });
+        }
+        res.json({ success: true, msg: 'Successfully updated config.' });
+    })
+});
+
+router.post('/emailAddress', function(req, res) {
+    let query = {'emailAddress': req.body.emailAddress},
+        email = {
+            emailAddress: req.body.emailAddress,
+        };
+    Email.findOneAndUpdate(query, email, {upsert:true, runValidators:true}, function(err, doc){
         if (err) {
             return res.status(500).send({ success: false, msg: 'Config save failed. ' + err });
         }
