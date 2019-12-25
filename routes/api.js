@@ -27,7 +27,7 @@ router.get('/', function (req, res, next) {
     res.send('Express RESTful API');
 });
 
-router.get("/songs", function(req, res) {
+router.get("/songs", function (req, res) {
     Song.find({}, function (err, songs) {
         if (err) {
             res.send(400, 'No Songs Found');
@@ -37,8 +37,8 @@ router.get("/songs", function(req, res) {
     });
 });
 
-router.get("/config", function(req, res) {
-    Config.find({zumoId:req.query.zumoId}, function (err, songs) {
+router.get("/config", function (req, res) {
+    Config.find({ zumoId: req.query.zumoId }, function (err, songs) {
         if (err) {
             res.send(400, 'No Config Found');
         } else {
@@ -47,10 +47,10 @@ router.get("/config", function(req, res) {
     });
 });
 
-router.post('/songs', function(req, res) {
-    let song = { 'selected': req.body.selected},
-        query = {'trackNumber': req.body.trackNumber};
-    Song.findOneAndUpdate(query, song, function(err, doc){
+router.post('/songs', function (req, res) {
+    let song = { 'selected': req.body.selected },
+        query = { 'trackNumber': req.body.trackNumber };
+    Song.findOneAndUpdate(query, song, function (err, doc) {
         if (err) {
             return res.status(500).send({ success: false, msg: 'Song save failed. ' + err });
         }
@@ -58,15 +58,15 @@ router.post('/songs', function(req, res) {
     })
 });
 
-router.post('/coords', function(req, res) {
-    let query = {'zumoId': req.body.zumoId},
+router.post('/coords', function (req, res) {
+    let query = { 'zumoId': req.body.zumoId },
         coords = {
             zumoId: req.body.zumoId,
             alpha: req.body.alpha,
             beta: req.body.beta,
             gamma: req.body.gamma,
         };
-    Coords.findOneAndUpdate(query, coords, {upsert:true, runValidators:true}, function(err, doc){
+    Coords.findOneAndUpdate(query, coords, { upsert: true, runValidators: true }, function (err, doc) {
         if (err) {
             return res.status(500).send({ success: false, msg: 'Coords save failed. ' + err });
         }
@@ -74,13 +74,13 @@ router.post('/coords', function(req, res) {
     })
 });
 
-router.post('/config', function(req, res) {
-    let query = {'zumoId': req.body.zumoId},
+router.post('/config', function (req, res) {
+    let query = { 'zumoId': req.body.zumoId },
         config = {
             zumoId: req.body.zumoId,
             speed: req.body.speed,
         };
-    Config.findOneAndUpdate(query, config, {upsert:true, runValidators:true}, function(err, doc){
+    Config.findOneAndUpdate(query, config, { upsert: true, runValidators: true }, function (err, doc) {
         if (err) {
             return res.status(500).send({ success: false, msg: 'Config save failed. ' + err });
         }
@@ -88,12 +88,31 @@ router.post('/config', function(req, res) {
     })
 });
 
-router.post('/emailAddress', function(req, res) {
-    let query = {'emailAddress': req.body.emailAddress},
+router.post('/contact', function (req, res) {
+    let query = {
+        'emailAddress': req.body.emailAddress,
+        'topic': req.body.topic,
+    },
+    contact = {
+        emailAddress: req.body.emailAddress,
+        topic: req.body.topic,
+        name: req.body.name,
+        contactNumber: req.body.contactNumber,
+    };
+    Email.findOneAndUpdate(query, contact, { upsert: true, runValidators: true }, function (err, doc) {
+        if (err) {
+            return res.status(500).send({ success: false, msg: 'contact entry save failed. ' + err });
+        }
+        res.json({ success: true, msg: 'Successfully updated contact entry.' });
+    })
+});
+
+router.post('/emailAddress', function (req, res) {
+    let query = { 'emailAddress': req.body.emailAddress },
         email = {
             emailAddress: req.body.emailAddress,
         };
-    Email.findOneAndUpdate(query, email, {upsert:true, runValidators:true}, function(err, doc){
+    Email.findOneAndUpdate(query, email, { upsert: true, runValidators: true }, function (err, doc) {
         if (err) {
             return res.status(500).send({ success: false, msg: 'Config save failed. ' + err });
         }
@@ -103,31 +122,31 @@ router.post('/emailAddress', function(req, res) {
 
 /* API consumed by Arduino */
 
-router.get('/zumoControls', function(req, res) { /* Get everything at once, seperated by pipes */
+router.get('/zumoControls', function (req, res) { /* Get everything at once, seperated by pipes */
     var queries = [
-        Song.find({'selected':true, 'zumoId':+req.query.zumoId}).exec(),
-        Coords.find({'zumoId':req.query.zumoId}).exec(),
-        Config.find({'zumoId':req.query.zumoId}).exec(),
+        Song.find({ 'selected': true, 'zumoId': +req.query.zumoId }).exec(),
+        Coords.find({ 'zumoId': req.query.zumoId }).exec(),
+        Config.find({ 'zumoId': req.query.zumoId }).exec(),
     ],
-    parts = [];
+        parts = [];
 
-    Promise.all(queries).then(function([song, coords, config]) {
+    Promise.all(queries).then(function ([song, coords, config]) {
         parts.push((song.length > 0 ? song[0].trackNumber.toString() : '0'));
         parts.push(coords.length > 0 ? `${coords[0].gamma}|${coords[0].beta}` : '0|0');
         parts.push(config.length > 0 ? config[0].speed : '200');
-        let response = {'zumoControls':parts.join('|')};
+        let response = { 'zumoControls': parts.join('|') };
         res.send(JSON.stringify(response));
-    }).catch(function(err){
+    }).catch(function (err) {
         res.send(400, `Error occured - ${err}`);
     });
 })
 
-router.get("/selectedTrackNumber", function(req, res) {
-    Song.find({'selected':true, 'zumoId':+req.query.zumoId}, function (err, songs) {
+router.get("/selectedTrackNumber", function (req, res) {
+    Song.find({ 'selected': true, 'zumoId': +req.query.zumoId }, function (err, songs) {
         if (err) {
             res.send(400, 'Songs Not Found');
         } else {
-            let song = {trackNumber: "0"};
+            let song = { trackNumber: "0" };
             if (!songs || songs.length == 0) {
                 res.send(JSON.stringify(song));
             } else {
@@ -138,12 +157,12 @@ router.get("/selectedTrackNumber", function(req, res) {
     });
 });
 
-router.get("/currentCoords", function(req, res) {
-    Coords.find({'zumoId':req.query.zumoId}, function (err, coords) {
+router.get("/currentCoords", function (req, res) {
+    Coords.find({ 'zumoId': req.query.zumoId }, function (err, coords) {
         if (err) {
             res.send(400, 'Coords Not Found');
         } else {
-            let resposne = {coordinates:`${coords[0].gamma}|${coords[0].beta}`};
+            let resposne = { coordinates: `${coords[0].gamma}|${coords[0].beta}` };
             res.send(JSON.stringify(resposne));
         }
     });
