@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var nodemailer = require('nodemailer');
 var Song = require("../models/song");
 var Coords = require("../models/coords");
 var Config = require("../models/config");
@@ -93,18 +94,40 @@ router.post('/contact', function (req, res) {
         'emailAddress': req.body.emailAddress,
         'topic': req.body.topic,
     },
-    contact = {
-        emailAddress: req.body.emailAddress,
-        topic: req.body.topic,
-        name: req.body.name,
-        contactNumber: req.body.contactNumber,
-    };
+        contact = {
+            emailAddress: req.body.emailAddress,
+            topic: req.body.topic,
+            name: req.body.name,
+            contactNumber: req.body.contactNumber,
+        };
     Email.findOneAndUpdate(query, contact, { upsert: true, runValidators: true }, function (err, doc) {
         if (err) {
             return res.status(500).send({ success: false, msg: 'contact entry save failed. ' + err });
         }
         res.json({ success: true, msg: 'Successfully updated contact entry.' });
     })
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'mathu99@gmail.com',
+            pass: 'Jambo@16'
+        }
+    });
+    const mailOptions = {
+        from: 'no-reply@focus1.co.za',
+        to: 'contact.matthewmills@gmail.com',
+        subject: 'New Query submitted on Focus1.co.za!',
+        html: `<p>Topic: ${contact.topic}</p>
+                <p>Name: ${contact.name}</p>
+                <p>Email: ${contact.emailAddress}</p>
+                <p>Contact Number: ${contact.contactNumber}</p>`,
+    };
+    transporter.sendMail(mailOptions, function (err, info) {
+        if(err)
+          console.log(err)
+        else
+          console.log(info);
+     });
 });
 
 router.post('/emailAddress', function (req, res) {
