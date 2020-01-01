@@ -117,7 +117,7 @@ router.post('/contact', function (req, res) {
         }
     });
     let mailOptions = {
-        from: 'no-reply@focus1.co.za',
+        from: '"Focus1" <no-reply@focus1.co.za>',
         to: contact.emailAddress,
         subject: 'Your Query submitted on Focus1.co.za!',
         html: `<div style="margin:0;padding:0" bgcolor="#FFFFFF">
@@ -233,7 +233,7 @@ router.post('/contact', function (req, res) {
             console.log(info);
     });
     mailOptions = {
-        from: 'no-reply@focus1.co.za',
+        from: '"Focus1" <no-reply@focus1.co.za>',
         to: 'enquire@focus1.co.za',
         subject: `New Query submitted on Focus1.co.za (${contact.name})`,
         html: `<div style="margin:0;padding:0" bgcolor="#FFFFFF">
